@@ -44,9 +44,9 @@ versions:
   genome_build: "GRCh38"
   ensembl_release: "113"
   clinvar_release: null
-  gnomad_version: null
+  gnomad_version:  "gnomad_r4"
   dbnsfp_version: null
-  alphamissense_version: null
+  alphamissense_version: "zenodo:10813168"
   vep_version: "113.0"
   spliceai_version: null
 
@@ -94,3 +94,10 @@ reference_resources:
     marker_paths: []
     version_key: null
     budget: "optional"
+  alphamissense:
+    subdir: "alphamissense"
+    marker_paths:
+      - "AlphaMissense_hg38.tsv.gz"
+      - "AlphaMissense_hg38.tsv.gz.tbi"
+    version_key: "alphamissense_version"
+    budget: "reference"

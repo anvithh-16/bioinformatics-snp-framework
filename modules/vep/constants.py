@@ -80,10 +80,12 @@ GENOMIC_REGION_DEFAULT = "Other / Unclassified"
 
 REQUIRED_VEP_PARAMS: dict[str, int] = {
     "hgvs": 1,
-    "mane_select": 1,
+    "mane": 1,
     "canonical": 1,
     "numbers": 1,
 }
+# Ensembl REST expects the request parameter "mane".
+# The response field is still named "mane_select".
 
 # ---------------------------------------------------------------------------
 # Plugin / field suppression list (Conversation 3A, Part 10.1)

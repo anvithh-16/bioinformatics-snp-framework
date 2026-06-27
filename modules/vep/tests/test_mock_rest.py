@@ -44,7 +44,7 @@ def test_full_response_parsing_via_client():
 
     # Required params (3A §4.2 / I-1 / I-3) were actually sent.
     sent_url = responses.calls[0].request.url
-    for param in ("hgvs=1", "mane_select=1", "canonical=1", "numbers=1"):
+    for param in ("hgvs=1", "mane=1", "canonical=1", "numbers=1"):
         assert param in sent_url
     # The prototype's incorrect content-type query param must not appear.
     assert "content-type" not in sent_url

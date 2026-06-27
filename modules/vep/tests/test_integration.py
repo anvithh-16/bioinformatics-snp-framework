@@ -43,9 +43,19 @@ def test_brca1_frameshift_live():
 
 
 def test_intergenic_live():
+    """
+    This variant is used as a negative control. Ensembl annotations evolve
+    over time (e.g. newly annotated non-coding transcripts), so we test the
+    behavioural contract rather than one exact Sequence Ontology term.
+    """
     result = annotate("8", 144500000, "A", "G")
     fields = result["fields"]
-    assert fields["most_severe_consequence"] in ("intergenic_variant", "upstream_gene_variant", "downstream_gene_variant")
+
+    # Should not produce a protein consequence.
+    assert fields["hgvs_p"] is None
+
+    # Should not be classified as protein-coding.
+    assert fields["genomic_region"] != "Protein Coding"
 
 
 def test_mt_chromosome_live():

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "variant": {
+      "variant_id": "11-5227002-T-A",
+      "reference_genome": "GRCh38",
+      "chrom": "11",
+      "pos": 5227002,
+      "ref": "T",
+      "alt": "A",
+      "exome": null,
+      "genome": {
+        "af": 0.0123,
+        "ac": 940,
+        "an": 76480,
+        "homozygote_count": 6,
+        "filters": ["AC0"],
+        "populations": [
+          {"id": "afr", "af": 0.04, "ac": 600, "an": 15000},
+          {"id": "nfe", "af": 0.005, "ac": 340, "an": 61480}
+        ]
+      }
+    }
+  }
+}

@@ -19,10 +19,28 @@ any code — every piece of generic infrastructure your module needs
 exceptions, reference resource management) already exists here. Do not
 reimplement any of it.
 
+Indexed Files Layer
+
+Provides generic random-access readers for BGZF/Tabix-indexed resources.
+
+Used by:
+
+* AlphaMissense
+* SpliceAI
+* Local gnomAD
+
+This layer performs only indexed lookup.
+
+Biological parsing remains inside each module.
+
 ## Directory layout
 
 ```
 shared/
+|---indexed_files/
+|   |--- __init__.py
+|   |---  tabix.py
+|   |--- README.md
 ├── http/
 │   ├── client.py       # HttpClient — the only HTTP client any module should use
 │   ├── retry.py        # retry_with_backoff decorator

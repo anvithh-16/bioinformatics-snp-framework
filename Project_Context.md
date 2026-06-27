@@ -162,6 +162,8 @@ utils/
 
 reference/
 
+Shared Indexed Files Layer — provides reusable random-access readers for BGZF/Tabix-indexed resources (e.g., AlphaMissense, SpliceAI, local gnomAD) while remaining independent of module-specific parsing logic.
+
 These are frozen.
 
 Future modules must reuse them.

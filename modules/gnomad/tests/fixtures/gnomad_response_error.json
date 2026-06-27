@@ -1,0 +1,8 @@
+{
+  "errors": [
+    {
+      "message": "Variant ID does not match the expected format",
+      "path": ["variant"]
+    }
+  ]
+}
