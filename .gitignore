@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Local caches
+cache/
+
+# Large biological databases
+reference/
+
+# Data
+data/raw/
+data/processed/
+outputs/
+
+# SQLite
+*.sqlite
+*.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# Temporary files
+*.tmp

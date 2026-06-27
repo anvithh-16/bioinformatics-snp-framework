@@ -1,0 +1,102 @@
+# config.example.yaml
+#
+# Copy this to config.yaml at the project root and adjust paths/versions.
+# Anything omitted here falls back to the built-in defaults in
+# shared/config/__init__.py.
+
+project_root: "."
+reference_dir: "reference"
+cache_dir: "cache"
+logs_dir: "logs"
+data_dir: "data"
+
+genome_build: "GRCh38"
+
+services:
+  ensembl_vep:
+    base_url: "https://rest.ensembl.org"
+    timeout_seconds: 15
+    max_retries: 4
+    rate_limit_per_second: 15
+  gnomad:
+    base_url: "https://gnomad.broadinstitute.org/api"
+    timeout_seconds: 20
+    max_retries: 4
+    rate_limit_per_second: 5
+  string_db:
+    base_url: "https://string-db.org/api"
+    timeout_seconds: 20
+    max_retries: 3
+    rate_limit_per_second: 5
+  gwas_catalog:
+    base_url: "https://www.ebi.ac.uk/gwas/rest/api"
+    timeout_seconds: 20
+    max_retries: 3
+    rate_limit_per_second: 5
+  alphafold_db:
+    base_url: "https://alphafold.ebi.ac.uk/api"
+    timeout_seconds: 30
+    max_retries: 3
+    rate_limit_per_second: 3
+
+# Pin these BEFORE Module 1 (VEP) is implemented, and update deliberately
+# (not automatically) whenever a resource is upgraded, for reproducibility.
+versions:
+  genome_build: "GRCh38"
+  ensembl_release: null
+  clinvar_release: null
+  gnomad_version: null
+  dbnsfp_version: null
+  alphamissense_version: null
+  vep_version: null
+  spliceai_version: null
+
+alphafold_cache_max_gb: 20
+project_storage_budget_gb: 200
+
+# Tier-0.5 — shared.reference. Declares where each shared biological
+# resource lives under reference_dir and what "installed" means for it.
+# shared.reference.ReferenceManager reads this; it never downloads
+# anything itself. Adjust subdir/marker_paths if your actual on-disk
+# layout differs from the defaults below.
+reference_resources:
+  grch38:
+    subdir: "grch38"
+    marker_paths: ["GRCh38.primary_assembly.genome.fa"]
+    version_key: null
+    budget: "reference"
+  clinvar:
+    subdir: "clinvar"
+    marker_paths: ["clinvar.vcf.gz"]
+    version_key: "clinvar_release"
+    budget: "reference"
+  ensembl:
+    subdir: "ensembl"
+    marker_paths: ["Homo_sapiens.GRCh38.gtf.gz"]
+    version_key: "ensembl_release"
+    budget: "reference"
+  dbnsfp:
+    subdir: "dbnsfp"
+    marker_paths: ["dbNSFP.txt.gz"]
+    version_key: "dbnsfp_version"
+    budget: "reference"
+  uniprot:
+    subdir: "uniprot"
+    marker_paths: ["uniprot_sprot_human.dat.gz"]
+    version_key: null
+    budget: "reference"
+  gnomad:
+    subdir: "gnomad"
+    marker_paths: ["gnomad.genomes.vcf.bgz"]
+    version_key: "gnomad_version"
+    budget: "reference"
+  spliceai:
+    subdir: "spliceai"
+    marker_paths: ["spliceai_scores.vcf.gz"]
+    version_key: "spliceai_version"
+    budget: "reference"
+  alphafold_cache:
+    subdir: "alphafold_cache"
+    marker_paths: []
+    version_key: null
+    budget: "optional"

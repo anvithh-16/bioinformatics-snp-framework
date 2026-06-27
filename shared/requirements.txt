@@ -1,0 +1,6 @@
+requests>=2.31
+PyYAML>=6.0
+
+# dev/test only
+pytest>=7.4
+responses>=0.23
