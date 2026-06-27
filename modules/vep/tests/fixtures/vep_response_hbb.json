@@ -1,0 +1,58 @@
+[
+  {
+    "input": "11 5227002 5227002 T/A 1",
+    "id": "11_5227002_T/A",
+    "seq_region_name": "11",
+    "start": 5227002,
+    "end": 5227002,
+    "strand": 1,
+    "allele_string": "T/A",
+    "most_severe_consequence": "missense_variant",
+    "assembly_name": "GRCh38",
+    "colocated_variants": [
+      {"id": "rs334"}
+    ],
+    "transcript_consequences": [
+      {
+        "transcript_id": "ENST00000647020",
+        "gene_id": "ENSG00000244734",
+        "gene_symbol": "HBB",
+        "biotype": "protein_coding",
+        "strand": -1,
+        "canonical": 1,
+        "mane_select": "NM_000518.5",
+        "consequence_terms": ["missense_variant"],
+        "impact": "MODERATE",
+        "amino_acids": "E/V",
+        "codons": "gAg/gTg",
+        "exon": "1/3",
+        "cdna_start": 142,
+        "cdna_end": 142,
+        "cds_start": 20,
+        "cds_end": 20,
+        "protein_start": 7,
+        "protein_end": 7,
+        "hgvsc": "ENST00000647020.1:c.20A>T",
+        "hgvsp": "ENSP00000496200.1:p.Glu7Val",
+        "polyphen_score": 0.997,
+        "polyphen_prediction": "probably_damaging",
+        "sift_score": 0.0,
+        "sift_prediction": "deleterious"
+      },
+      {
+        "transcript_id": "ENST00000335295",
+        "gene_id": "ENSG00000244734",
+        "gene_symbol": "HBB",
+        "biotype": "protein_coding",
+        "strand": -1,
+        "consequence_terms": ["missense_variant"],
+        "impact": "MODERATE",
+        "amino_acids": "E/V",
+        "codons": "gAg/gTg",
+        "exon": "1/3",
+        "hgvsc": "ENST00000335295.4:c.20A>T",
+        "hgvsp": "ENSP00000334123.4:p.Glu7Val"
+      }
+    ]
+  }
+]

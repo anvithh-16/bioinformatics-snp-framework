@@ -1,0 +1,43 @@
+[
+  {
+    "input": "19 11089875 11089875 T/G 1",
+    "seq_region_name": "19",
+    "start": 11089875,
+    "end": 11089875,
+    "strand": 1,
+    "allele_string": "T/G",
+    "most_severe_consequence": "missense_variant",
+    "assembly_name": "GRCh38",
+    "transcript_consequences": [
+      {
+        "transcript_id": "ENST00000558518",
+        "gene_id": "ENSG00000130164",
+        "gene_symbol": "LDLR",
+        "biotype": "protein_coding",
+        "strand": 1,
+        "consequence_terms": ["missense_variant"],
+        "impact": "MODERATE",
+        "amino_acids": "W/G",
+        "codons": "Tgg/Ggg",
+        "exon": "11/18",
+        "hgvsc": "ENST00000558518.1:c.1543T>G",
+        "hgvsp": "ENSP00000452121.1:p.Trp515Gly"
+      },
+      {
+        "transcript_id": "ENST00000252444",
+        "gene_id": "ENSG00000130164",
+        "gene_symbol": "LDLR",
+        "biotype": "protein_coding",
+        "strand": 1,
+        "canonical": 1,
+        "consequence_terms": ["missense_variant"],
+        "impact": "MODERATE",
+        "amino_acids": "W/G",
+        "codons": "Tgg/Ggg",
+        "exon": "11/18",
+        "hgvsc": "ENST00000252444.2:c.1543T>G",
+        "hgvsp": "ENSP00000252444.2:p.Trp515Gly"
+      }
+    ]
+  }
+]

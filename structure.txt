@@ -1,0 +1,177 @@
+bioinformatics-snp-framework/
+│
+├── README.md                          # Project overview
+├── LICENSE
+├── .gitignore
+├── requirements.txt
+├── requirements.lock                  # Frozen dependencies
+├── pyproject.toml                     # (Optional later)
+├── config.yaml                        # Global configuration
+│
+├── docs/
+│   ├── architecture.md
+│   ├── decision_log.md
+│   ├── roadmap.md
+│   ├── module_guidelines.md
+│   ├── integration.md
+│   └── images/
+│
+├── shared/
+│   │
+│   ├── __init__.py
+│   │
+│   ├── cache/
+│   │   ├── __init__.py
+│   │   ├── memory.py
+│   │   ├── disk.py
+│   │   └── ...
+│   │
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── ...
+│   │
+│   ├── exceptions/
+│   │   ├── __init__.py
+│   │   └── ...
+│   │
+│   ├── http/
+│   │   ├── __init__.py
+│   │   ├── client.py
+│   │   ├── retry.py
+│   │   ├── ratelimit.py
+│   │   └── ...
+│   │
+│   ├── logging/
+│   │
+│   ├── reference/
+│   │   ├── manager.py
+│   │   ├── models.py
+│   │   ├── README.md
+│   │   └── __init__.py
+│   │
+│   ├── validators/
+│   │
+│   ├── utils/
+│   │
+│   ├── models/                        # <-- I recommend adding this
+│   │   ├── variant.py
+│   │   ├── annotation.py
+│   │   ├── metadata.py
+│   │   └── __init__.py
+│   │
+│   └── tests/
+│       ├── integration/
+│       ├── test_http.py
+│       ├── test_cache.py
+│       ├── test_reference.py
+│       └── ...
+│
+├── modules/
+│   │
+│   ├── vep/
+│   │   ├── __init__.py
+│   │   ├── annotator.py
+│   │   ├── parser.py
+│   │   ├── models.py
+│   │   ├── tests/
+│   │   └── README.md
+│   │
+│   ├── alphamissense/
+│   │
+│   ├── gnomad/
+│   │
+│   ├── gerp/
+│   │
+│   ├── loeuf/
+│   │
+│   ├── intervar/
+│   │
+│   ├── spliceai/
+│   │
+│   ├── mutpred/
+│   │
+│   ├── alphafold/
+│   │
+│   ├── gtex/
+│   │
+│   ├── string/
+│   │
+│   └── gwas/
+│
+├── reference/
+│   │
+│   ├── genome/
+│   │   └── GRCh38.fa
+│   │
+│   ├── clinvar/
+│   │
+│   ├── ensembl/
+│   │
+│   ├── dbnsfp/
+│   │
+│   ├── gnomad/
+│   │
+│   ├── uniprot/
+│   │
+│   ├── alphafold_cache/
+│   │
+│   ├── blast/                     # Optional (MutPred)
+│   │
+│   ├── spliceai/
+│   │
+│   └── VERSION_MANIFEST.yaml
+│
+├── data/
+│   │
+│   ├── raw/
+│   │
+│   ├── processed/
+│   │
+│   ├── intermediate/
+│   │
+│   ├── validation/
+│   │
+│   └── examples/
+│
+├── pipeline/
+│   │
+│   ├── annotate.py
+│   ├── merge.py
+│   ├── feature_engineering.py
+│   ├── standardize.py
+│   ├── export.py
+│   └── __init__.py
+│
+├── ml/
+│   │
+│   ├── dataset_builder.py
+│   ├── preprocessing.py
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── explainability.py
+│   └── experiments/
+│
+├── notebooks/
+│   ├── exploration.ipynb
+│   ├── benchmarking.ipynb
+│   └── experiments/
+│
+├── reports/
+│   ├── figures/
+│   ├── tables/
+│   └── presentation/
+│
+├── logs/
+│
+├── cache/
+│
+├── outputs/
+│   ├── annotations/
+│   ├── merged/
+│   ├── features/
+│   └── predictions/
+│
+└── tests/
+    ├── regression/
+    ├── end_to_end/
+    └── integration/
