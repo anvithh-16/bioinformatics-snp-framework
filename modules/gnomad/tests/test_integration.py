@@ -27,7 +27,7 @@ pytestmark = pytest.mark.integration
 
 def _require_pinned_dataset():
     cfg = get_config()
-    if not getattr(cfg.versions, "gnomad_version", None):
+    if not cfg.version("gnomad_version"):
         pytest.skip("versions.gnomad_version is not pinned in config.yaml")
 
 
@@ -47,7 +47,7 @@ class TestGnomadLiveAPI:
         # slightly between gnomAD releases.
         assert result["status"] in ("ok", "no_data", "low_confidence")
         assert "fields" in result
-        assert result["source_version"] == get_config().versions.gnomad_version
+        assert result["source_version"] == get_config().version("gnomad_version")
 
     def test_clearly_nonexistent_variant_returns_no_data(self):
         _require_pinned_dataset()

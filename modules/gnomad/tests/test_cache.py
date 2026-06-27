@@ -25,6 +25,7 @@ from unittest.mock import MagicMock
 import pytest
 
 import modules.gnomad as gnomad_module
+from shared.cache import DiskCache
 from shared.exceptions import AnnotationUnavailableError
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
@@ -36,13 +37,26 @@ def _load_fixture(name: str) -> dict:
 
 
 @pytest.fixture(autouse=True)
-def _reset_module_singletons():
+def _reset_module_singletons(tmp_path):
     """
     annotate() lazily caches a DiskCache + GnomadRemoteClient at module
-    level. Reset both between tests so each test gets a fresh cache
-    backed by a tmp-path config, and a fresh mocked backend.
+    level. Reset both between tests AND, critically, point the cache at
+    a fresh `tmp_path`-scoped SQLite file rather than letting
+    `_get_cache()` fall through to the real project `cache_dir`.
+
+    This isolation is required, not optional: without it, every test in
+    this file shares one persistent on-disk cache file across the whole
+    test run (and across separate `pytest` invocations, since SQLite
+    files survive process exit). That caused real, reproducible
+    cross-test pollution during review -- e.g. a variant cached as "ok"
+    by an earlier test silently short-circuited a later test that
+    expected the (mocked) backend to be called and raise an error. This
+    mirrors Shared_README.md's own note that `shared.reference`'s tests
+    use `tmp_path` for exactly this reason.
     """
-    gnomad_module._cache = None
+    gnomad_module._cache = DiskCache(
+        tmp_path / "gnomad_test_cache.sqlite", default_ttl_seconds=86400
+    )
     gnomad_module._remote_client = None
     yield
     gnomad_module._cache = None
@@ -80,8 +94,11 @@ class TestAnnotateCaching:
     def test_no_data_result_is_still_cached(self, mock_backend):
         mock_backend.fetch_variant_data.return_value = None
 
-        result1 = gnomad_module.annotate("99", 1, "A", "T")
-        result2 = gnomad_module.annotate("99", 1, "A", "T")
+        # Valid chromosome (1), but a coordinate the mocked backend reports
+        # as not found -- exercising status=no_data caching, not a
+        # validation failure.
+        result1 = gnomad_module.annotate("1", 1, "A", "T")
+        result2 = gnomad_module.annotate("1", 1, "A", "T")
 
         assert result1["status"] == "no_data"
         assert mock_backend.fetch_variant_data.call_count == 1

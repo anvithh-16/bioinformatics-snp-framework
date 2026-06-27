@@ -14,6 +14,7 @@ test_cache.py and test_unit.py respectively.
 """
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -24,7 +25,20 @@ from shared.exceptions import AnnotationUnavailableError
 from modules.gnomad.client import GnomadRemoteClient
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
-GNOMAD_BASE_URL = "https://gnomad.broadinstitute.org/api"
+
+# Matched via regex rather than an exact string. Confirmed against a real
+# run of this test suite inside the actual project (not this module's own
+# assumption): shared.http.HttpClient.for_service("gnomad").post("", ...)
+# produces a request to "https://gnomad.broadinstitute.org/api/" (note the
+# trailing slash) even though the configured base_url has none. That
+# behavior lives entirely inside shared/http/client.py's URL-joining logic,
+# which this module does not own and must not change (Project_Context.md:
+# "No module should force changes to the shared infrastructure"). The test
+# was the side that had assumed an exact, slash-less URL -- that assumption
+# was wrong, not the implementation. Matching `/api/?$` makes this test
+# correct regardless of whether HttpClient's trailing-slash behavior is
+# present or absent, so it won't silently re-break if that detail changes.
+GNOMAD_BASE_URL = re.compile(r"^https://gnomad\.broadinstitute\.org/api/?$")
 
 
 def _load_fixture(name: str) -> dict:

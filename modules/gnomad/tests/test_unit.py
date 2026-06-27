@@ -38,30 +38,35 @@ class TestVariantIdConversion:
 
 
 class TestParseVariantResponse:
-    def test_found_variant_combines_exome_and_genome(self):
+    def test_found_variant_uses_authoritative_joint_block(self):
+        """
+        Regression test for the post-implementation review fix: the
+        parser must read af_overall/ac_overall/an_overall/n_homozygotes
+        directly from gnomAD's own server-computed `joint` block, NOT
+        by manually summing exome+genome. The fixture's joint values are
+        deliberately different from exome+genome's naive sum
+        (12+4=16, 291248+76480=367728) specifically so this test fails
+        loudly if the old (incorrect) summation behavior ever regresses.
+        """
         raw = _load_fixture("gnomad_response_found.json")["data"]["variant"]
         fields = parse_variant_response(raw, "1-55051215-G-A", "gnomad_r4")
 
-        # ac_overall/an_overall must be the SUM of exome+genome, not either
-        # subset alone and not an average of the two af values.
-        assert fields["ac_overall"] == 12 + 4
-        assert fields["an_overall"] == 291248 + 76480
-        expected_af = (12 + 4) / (291248 + 76480)
-        assert fields["af_overall"] == pytest.approx(expected_af)
+        assert fields["ac_overall"] == 17  # joint.ac, NOT 12+4=16
+        assert fields["an_overall"] == 365000  # joint.an, NOT 291248+76480=367728
+        assert fields["af_overall"] == pytest.approx(17 / 365000)
+        assert fields["n_homozygotes"] == 1  # joint.homozygote_count
         assert fields["status"] == STATUS_OK
         assert fields["filter_status"] == "PASS"
-        assert fields["n_homozygotes"] == 0
         assert fields["annotation_source"] == "remote"
 
-    def test_found_variant_population_frequencies_combined(self):
+    def test_found_variant_population_frequencies_come_from_joint(self):
         raw = _load_fixture("gnomad_response_found.json")["data"]["variant"]
         fields = parse_variant_response(raw, "1-55051215-G-A", "gnomad_r4")
 
         pops = fields["population_frequencies"]
         assert "afr" in pops and "nfe" in pops
-        # afr: ac 2+2=4, an 16240+13000=29240
-        assert pops["afr"]["ac"] == 4
-        assert pops["afr"]["an"] == 16240 + 13000
+        assert pops["afr"]["ac"] == 5
+        assert pops["afr"]["an"] == 29000
 
     def test_found_variant_popmax_is_highest_population_af(self):
         raw = _load_fixture("gnomad_response_found.json")["data"]["variant"]
@@ -89,7 +94,7 @@ class TestParseVariantResponse:
         raw = _load_fixture("gnomad_response_partial.json")["data"]["variant"]
         fields = parse_variant_response(raw, "11-5227002-T-A", "gnomad_r4")
 
-        # Only genome present; overall must equal genome-only values.
+        # Only genome present; joint should still resolve correctly.
         assert fields["ac_overall"] == 940
         assert fields["an_overall"] == 76480
         assert fields["n_homozygotes"] == 6

@@ -24,6 +24,14 @@ specific module's column layout. It must stay that way for it to be
 safely reusable by SpliceAI and gnomAD's local-file path later.
 """
 
-from shared.indexed_files.tabix import TabixLookup, get_tabix_lookup
+from .tabix import (
+    TabixLookup,
+    get_tabix_lookup,
+    _reset_handle_cache_for_tests,
+)
 
-__all__ = ["TabixLookup", "get_tabix_lookup"]
+__all__ = [
+    "TabixLookup",
+    "get_tabix_lookup",
+    "_reset_handle_cache_for_tests",
+]

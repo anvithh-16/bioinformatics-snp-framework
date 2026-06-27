@@ -2,31 +2,29 @@
   "data": {
     "variant": {
       "variant_id": "1-55051215-G-A",
-      "reference_genome": "GRCh38",
       "chrom": "1",
       "pos": 55051215,
       "ref": "G",
       "alt": "A",
       "exome": {
-        "af": 0.0000412,
         "ac": 12,
         "an": 291248,
         "homozygote_count": 0,
-        "filters": [],
-        "populations": [
-          {"id": "afr", "af": 0.0001, "ac": 2, "an": 16240},
-          {"id": "nfe", "af": 0.00003, "ac": 10, "an": 270000}
-        ]
+        "filters": []
       },
       "genome": {
-        "af": 0.0000523,
         "ac": 4,
         "an": 76480,
         "homozygote_count": 0,
-        "filters": [],
+        "filters": []
+      },
+      "joint": {
+        "ac": 17,
+        "an": 365000,
+        "homozygote_count": 1,
         "populations": [
-          {"id": "afr", "af": 0.00015, "ac": 2, "an": 13000},
-          {"id": "nfe", "af": 0.00003, "ac": 2, "an": 63480}
+          {"id": "afr", "ac": 5, "an": 29000, "homozygote_count": 1},
+          {"id": "nfe", "ac": 12, "an": 336000, "homozygote_count": 0}
         ]
       }
     }

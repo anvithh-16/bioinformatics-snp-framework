@@ -43,53 +43,60 @@ GRAPHQL_PATH = ""  # base_url already points at https://gnomad.broadinstitute.or
 
 # Production GraphQL query.
 #
-# Differences from the POC script's query:
-#   - Requests `ac`, `an`, `homozygote_count` in addition to `af`, for both
-#     exome and genome, because the frozen output schema's ac_overall/
-#     an_overall/n_homozygotes fields need them (Section 14).
-#   - Requests `popmax` and `popmax_population` at the variant level, for
-#     af_popmax / popmax_population (Section 14).
-#   - Requests `filters` (site-level QC flags) for filter_status (Section
-#     15 / 23).
-#   - Requests `populations { id af ac an }` for the full per-population
-#     breakdown (Section 14, population_frequencies).
+# CORRECTED in post-implementation review (see parser.py module docstring
+# for full rationale). The original version of this query requested only
+# `exome { af ac an ... }` and `genome { af ac an ... }` and relied on
+# parser.py to manually sum ac/an across both subsets to derive an
+# "overall" frequency. That was a mistake: gnomAD's GraphQL API exposes a
+# THIRD, server-computed `joint` block that already represents the
+# correct combined exome+genome statistics. Confirmed against two
+# independently-written, currently-working scripts that query the live
+# gnomAD v4 API (one from the gnomad-browser GitHub org's own fork
+# ecosystem). Neither script requests `af` directly on any block --
+# both compute af = ac/an client-side -- so this query does the same,
+# rather than assuming an unconfirmed `af` field exists.
 #
-# All of the above are real fields on gnomAD's public GraphQL schema for
-# the `variant` query; this module's job is only to request and parse them,
-# never to reinterpret gnomAD's own definitions.
+#   - `exome` / `genome`: kept for transparency/debugging and for
+#     filter_status derivation (Section 15/23) -- NOT used to derive
+#     af_overall/ac_overall/an_overall anymore.
+#   - `joint`: the authoritative, server-computed combined statistics.
+#     This is what af_overall / ac_overall / an_overall / n_homozygotes /
+#     population_frequencies are now derived from.
+#
+# NOTE: the `filters` field below (on exome/genome) could not be
+# independently confirmed against a live schema introspection from this
+# environment (network policy blocks gnomad.broadinstitute.org). Treat
+# it as a flagged assumption, not a verified fact, until confirmed
+# against a real response or schema introspection.
 VARIANT_QUERY = """
 query GnomadVariant($variantId: String!, $dataset: DatasetId!) {
   variant(variantId: $variantId, dataset: $dataset) {
     variant_id
-    reference_genome
     chrom
     pos
     ref
     alt
     exome {
-      af
       ac
       an
       homozygote_count
       filters
-      populations {
-        id
-        af
-        ac
-        an
-      }
     }
     genome {
-      af
       ac
       an
       homozygote_count
       filters
+    }
+    joint {
+      ac
+      an
+      homozygote_count
       populations {
         id
-        af
         ac
         an
+        homozygote_count
       }
     }
   }

@@ -45,6 +45,7 @@ FIXTURE_ROWS = [
 
 def _build_indexed_fixture(tmp_path: Path, rows: list[tuple[str, ...]]) -> Path:
     raw_path = tmp_path / "fixture.tsv"
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
     with open(raw_path, "w") as fh:
         for row in rows:
             fh.write("\t".join(row) + "\n")
@@ -59,9 +60,9 @@ def _build_indexed_fixture(tmp_path: Path, rows: list[tuple[str, ...]]) -> Path:
 
     compressed_path = pysam.tabix_index(
         str(sorted_path),
-        seq_col=1,
-        start_col=2,
-        end_col=2,
+        seq_col=0,
+        start_col=1,
+        end_col=1,
         zerobased=False,
         force=True,
     )

@@ -86,25 +86,32 @@ annotate(chrom, position, reference, alternate)
     -> return
 ```
 
-### Important deviation from the original design assumption
+### Post-implementation review correction
 
-The frozen design doc (Section 14) assumed gnomAD exposes one
-pre-combined "joint" frequency. The actual GraphQL schema returns
-**separate `exome` and `genome` blocks**, each with independent
-`af`/`ac`/`an`/`homozygote_count`/`filters`/`populations`. This module
-computes `af_overall` etc. by **summing allele counts and allele numbers
-across both subsets and recomputing the ratio** — not by averaging the
-two `af` values, which would be statistically wrong when the two
-subsets have very different sample sizes. See the detailed comment at
-the top of `parser.py` for the full reasoning. The *output field names*
-from the frozen schema are unchanged; only how they're computed differs
-from what was originally assumed before the GraphQL schema was confirmed.
+The first implementation derived `af_overall`/`ac_overall`/`an_overall`/
+`n_homozygotes`/`population_frequencies` by manually summing gnomAD's
+separate `exome` and `genome` blocks client-side. **This was a real bug,
+fixed during review.** gnomAD's GraphQL API exposes a third block,
+**`joint`**, which is the Broad Institute's own server-computed
+combination of exome+genome and is the authoritative source for
+"overall" statistics. This was confirmed against two independently
+written, currently-working scripts that query the live gnomAD v4 API.
 
-`af_popmax` / `popmax_population` are derived locally from the combined
-`population_frequencies`, rather than read from a `popmax` field
-directly off the GraphQL response — gnomAD's exposure of a direct
-`popmax` field is inconsistent across dataset versions, so deriving it
-locally keeps this module's output stable across releases.
+This module now reads `af_overall`/`ac_overall`/`an_overall`/
+`n_homozygotes`/`population_frequencies` directly from `joint`. `exome`
+and `genome` are still requested and parsed, but only to derive
+`filter_status` — they are never used to compute a frequency statistic.
+The output field *names* are unchanged from the frozen schema; only how
+they're computed changed. See the detailed rationale at the top of
+`parser.py`.
+
+One field's exact placement remains an explicitly flagged assumption,
+not a verified fact: `filters` (requested on `exome`/`genome` for
+`filter_status`) could not be confirmed against a live schema
+introspection from this environment, since outbound network access to
+`gnomad.broadinstitute.org` is blocked by this sandbox's network policy.
+Confirm this against a real response (or schema introspection) before
+relying on `filter_status` in production.
 
 ## Caching
 

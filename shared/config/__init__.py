@@ -341,7 +341,11 @@ class FrameworkConfig:
     ) -> "FrameworkConfig":
         merged = dict(_DEFAULTS)
 
-        path = config_path or os.environ.get("FRAMEWORK_CONFIG_PATH")
+        path = (
+                config_path
+                or os.environ.get("FRAMEWORK_CONFIG_PATH")
+                or Path("config.yaml")
+        )
         if path:
             path = Path(path)
             if not path.exists():

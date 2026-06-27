@@ -145,7 +145,7 @@ def annotate(
     variant = validate_variant(chrom, position, reference, alternate)
 
     cfg = get_config()
-    dataset = cfg.versions.gnomad_version
+    dataset = cfg.version("gnomad_version")
     if not dataset:
         # Mirrors VEP's reproducibility requirement: an unpinned version
         # must never silently proceed (Section 20 / Project_Context.md
