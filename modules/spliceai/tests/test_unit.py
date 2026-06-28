@@ -18,13 +18,20 @@ from modules.spliceai.parser import (
 # chromosome normalisation
 # ---------------------------------------------------------------------------
 
-def test_normalize_chrom_for_file_adds_prefix():
-    assert normalize_chrom_for_file("17") == "chr17"
-    assert normalize_chrom_for_file("X") == "chrX"
+def test_normalize_chrom_for_file_strips_chr_prefix():
+    # The real file uses bare names; UCSC-style input must be stripped.
+    assert normalize_chrom_for_file("chr17") == "17"
+    assert normalize_chrom_for_file("chrX") == "X"
 
 
-def test_normalize_chrom_for_file_is_idempotent():
-    assert normalize_chrom_for_file("chr17") == "chr17"
+def test_normalize_chrom_for_file_bare_name_is_unchanged():
+    # Canonical project convention already matches the file — no-op.
+    assert normalize_chrom_for_file("17") == "17"
+    assert normalize_chrom_for_file("X") == "X"
+
+
+def test_normalize_chrom_for_file_is_case_insensitive_on_prefix():
+    assert normalize_chrom_for_file("CHR17") == "17"
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +100,7 @@ def test_parse_variant_rows_no_rows_returns_none():
 
 def test_parse_variant_rows_matching_allele_returns_parsed():
     info = "SpliceAI=T|BRCA1|0.02|0.91|0.01|0.03|-2|3|1|-4"
-    row = _make_row("chr17", "41276045", "G", "T", info)
+    row = _make_row("17", "41276045", "G", "T", info)
     result = parse_variant_rows([row], "T")
     assert result is not None
     assert result["ds_al"] == pytest.approx(0.91)
@@ -103,13 +110,13 @@ def test_parse_variant_rows_matching_allele_returns_parsed():
 
 def test_parse_variant_rows_non_matching_allele_returns_none():
     info = "SpliceAI=T|BRCA1|0.02|0.91|0.01|0.03|-2|3|1|-4"
-    row = _make_row("chr17", "41276045", "G", "T", info)
+    row = _make_row("17", "41276045", "G", "T", info)
     assert parse_variant_rows([row], "C") is None
 
 
 def test_parse_variant_rows_multi_allele_selects_correct_entry():
     info = "SpliceAI=A|GENEX|0.55|0.10|0.02|0.03|5|-2|1|-3,C|GENEX|0.01|0.02|0.03|0.01|1|2|3|4"
-    row = _make_row("chr5", "150000000", "G", "A,C", info)
+    row = _make_row("5", "150000000", "G", "A,C", info)
     # Query for A
     result_a = parse_variant_rows([row], "A")
     assert result_a is not None
@@ -122,7 +129,7 @@ def test_parse_variant_rows_multi_allele_selects_correct_entry():
 
 def test_parse_variant_rows_allele_match_is_case_insensitive():
     info = "SpliceAI=t|GENE|0.5|0.1|0.2|0.3|1|2|3|4"
-    row = _make_row("chr1", "100", "A", "T", info)
+    row = _make_row("1", "100", "A", "T", info)
     result = parse_variant_rows([row], "T")
     assert result is not None
 
@@ -134,7 +141,7 @@ def test_parse_variant_rows_dot_fields_are_none_not_no_data():
     status='ok'.
     """
     info = "SpliceAI=A|DOTGENE|.|0.30|.|0.10|.|5|.|2"
-    row = _make_row("chr7", "100000000", "C", "A", info)
+    row = _make_row("7", "100000000", "C", "A", info)
     result = parse_variant_rows([row], "A")
     assert result is not None
     assert result["ds_ag"] is None
@@ -148,13 +155,13 @@ def test_parse_variant_rows_dot_fields_are_none_not_no_data():
 
 
 def test_parse_variant_rows_row_without_spliceai_info_skipped():
-    row = _make_row("chr1", "100", "A", "T", "AF=0.01;END=100")
+    row = _make_row("1", "100", "A", "T", "AF=0.01;END=100")
     assert parse_variant_rows([row], "T") is None
 
 
 def test_parse_variant_rows_short_row_skipped():
     # Row with fewer than 8 columns should be skipped, not raise.
-    assert parse_variant_rows([("chr1", "100", ".", "A")], "T") is None
+    assert parse_variant_rows([("1", "100", ".", "A")], "T") is None
 
 
 # ---------------------------------------------------------------------------

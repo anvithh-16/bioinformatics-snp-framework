@@ -30,11 +30,24 @@ log = get_logger(__name__)
 # ---------------------------------------------------------------------------
 
 def normalize_chrom_for_file(chrom: str) -> str:
-    """Bare Ensembl-style ('1', 'X') -> file convention ('chr1', 'chrX')."""
+    """
+    Normalise a chromosome name to the convention used in the Illumina
+    SpliceAI masked SNV file: bare Ensembl-style names ("1", "17", "X").
+
+    This project's canonical variant model already uses Ensembl-style
+    names, so in the common case this function is a no-op. It exists as
+    the single, named translation point so that any future format change
+    (e.g. a new Illumina release that switches to UCSC "chr"-prefixed
+    names) is a one-line edit here rather than a search-and-replace
+    across the module.
+
+    Strips a leading "chr" (case-insensitive) if one is present, so that
+    callers who receive UCSC-style input are not silently broken.
+    """
     chrom = chrom.strip()
     if chrom.lower().startswith(FILE_CHROM_PREFIX):
-        return chrom
-    return f"{FILE_CHROM_PREFIX}{chrom}"
+        return chrom[len(FILE_CHROM_PREFIX):]
+    return chrom
 
 
 # ---------------------------------------------------------------------------

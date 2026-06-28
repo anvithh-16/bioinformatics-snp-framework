@@ -81,21 +81,21 @@ def test_cache_key_scoped_by_resource_version(tmp_path, fake_reference_manager, 
         def version(self, key):
             return self._version if key == "spliceai_version" else None
 
-    rows_v1 = [("chr1", "555", ".", "A", "T", ".", ".", "SpliceAI=T|GENE|0.9|0.1|0.1|0.1|1|2|3|4")]
-    rows_v2 = [("chr1", "555", ".", "A", "T", ".", ".", "SpliceAI=T|GENE|0.1|0.0|0.0|0.0|1|2|3|4")]
+    rows_v1 = [("1", "555", ".", "A", "T", ".", ".", "SpliceAI=T|GENE|0.9|0.1|0.1|0.1|1|2|3|4")]
+    rows_v2 = [("1", "555", ".", "A", "T", ".", ".", "SpliceAI=T|GENE|0.1|0.0|0.0|0.0|1|2|3|4")]
 
-    file_v1 = write_fixture_vcf(tmp_path / "v1.vcf", rows_v1)
-    file_v2 = write_fixture_vcf(tmp_path / "v2.vcf", rows_v2)
+    dir_v1 = write_fixture_vcf(tmp_path / "v1", rows_v1)
+    dir_v2 = write_fixture_vcf(tmp_path / "v2", rows_v2)
 
     cache_dir = tmp_path / "cache"
 
-    fake_reference_manager.set_resource(file_v1, "spliceai:v1")
+    fake_reference_manager.set_resource(dir_v1, "spliceai:v1")
     monkeypatch.setattr(ann_mod, "get_config", lambda: VersionedConfig("spliceai:v1", cache_dir))
     result_v1 = annotate("1", 555, "A", "T")
     assert result_v1["fields"]["ds_acceptor_gain"] == pytest.approx(0.9)
     assert result_v1["source_version"] == "spliceai:v1"
 
-    fake_reference_manager.set_resource(file_v2, "spliceai:v2")
+    fake_reference_manager.set_resource(dir_v2, "spliceai:v2")
     monkeypatch.setattr(ann_mod, "get_config", lambda: VersionedConfig("spliceai:v2", cache_dir))
     result_v2 = annotate("1", 555, "A", "T")
     assert result_v2["fields"]["ds_acceptor_gain"] == pytest.approx(0.1)

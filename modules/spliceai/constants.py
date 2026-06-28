@@ -11,8 +11,13 @@ STATUS_NO_DATA = "no_data"
 
 VALID_STATUSES = frozenset({STATUS_OK, STATUS_NO_DATA})
 
-# The SpliceAI masked SNV file uses UCSC-style "chr"-prefixed contig names.
-# Canonical project convention is bare Ensembl-style ("1", "X").
+# The Illumina SpliceAI masked SNV file uses bare Ensembl-style contig
+# names ("1", "17", "X") — identical to this project's canonical
+# variant convention. No prefix translation is needed in either direction;
+# FILE_CHROM_PREFIX is kept here as the single documented location for
+# this fact so that parser.normalize_chrom_for_file() has a named
+# constant to reference, and so any future format change is a one-line
+# edit here rather than a grep.
 FILE_CHROM_PREFIX = "chr"
 
 # VCF INFO field key whose value holds all per-allele SpliceAI entries.
@@ -47,5 +52,12 @@ VCF_EXPECTED_MIN_COLUMNS = 8
 # Caching: no predictable update cadence — invalidation is driven by the
 # pinned version string in the cache key, not by TTL. 10-year TTL used
 # rather than literally infinite, matching the AlphaMissense precedent.
+# The primary data file within the resource directory.
+# This is the first (and only scored-data) entry in config.yaml's
+# marker_paths list. Defined here so client.py has one symbolic name
+# to reference rather than an inline string literal, and so the
+# conftest fixture can use the same constant when writing the fixture file.
+PRIMARY_VCF_FILENAME = "spliceai_scores.masked.snv.hg38.vcf.gz"
+
 CACHE_TTL_SECONDS = 315_360_000
 CACHE_FILENAME = "spliceai.sqlite"
