@@ -88,13 +88,13 @@ _DEFAULTS: dict[str, Any] = {
     # of its underlying resource produced the annotation, for reproducibility.
     "versions": {
         "genome_build": "GRCh38",
-        "ensembl_release": None,    # to be pinned before Module 1 ships
+        "ensembl_release": "113",    # to be pinned before Module 1 ships
         "clinvar_release": None,
-        "gnomad_version": None,
+        "gnomad_version": "gnomad_r4",
         "dbnsfp_version": None,
-        "alphamissense_version": None,
-        "vep_version": None,
-        "spliceai_version": None,
+        "alphamissense_version": "zenodo:10813168",
+        "vep_version": "113.0",
+        "spliceai_version": "spliceai:1.3",
     },
 
     "alphafold_cache_max_gb": 20,
@@ -159,7 +159,10 @@ _DEFAULTS: dict[str, Any] = {
         },
         "spliceai": {
             "subdir": "spliceai",
-            "marker_paths": ["spliceai_scores.vcf.gz"],
+            "marker_paths": [
+                "spliceai_scores.masked.snv.hg38.vcf.gz",
+                "spliceai_scores.masked.snv.hg38.vcf.gz.tbi",
+            ],
             "version_key": "spliceai_version",
             "budget": "reference",
         },

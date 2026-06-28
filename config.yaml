@@ -48,7 +48,8 @@ versions:
   dbnsfp_version: null
   alphamissense_version: "zenodo:10813168"
   vep_version: "113.0"
-  spliceai_version: null
+  spliceai_version: "spliceai:1.3"
+#The exact version string will be taken from the downloaded file’s metadata (e.g. VCF header) when the reference resource is pinned.
 
 alphafold_cache_max_gb: 20
 project_storage_budget_gb: 200
@@ -86,7 +87,9 @@ reference_resources:
     budget: "reference"
   spliceai:
     subdir: "spliceai"
-    marker_paths: ["spliceai_scores.vcf.gz"]
+    marker_paths:
+      - "spliceai_scores.masked.snv.hg38.vcf.gz"
+      - "spliceai_scores.masked.snv.hg38.vcf.gz.tbi"
     version_key: "spliceai_version"
     budget: "reference"
   alphafold_cache:
