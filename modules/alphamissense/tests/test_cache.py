@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from shared.reference import get_reference_manager
-
 from modules.alphamissense.annotator import annotate
 from modules.alphamissense.client import AlphaMissenseClient
 from modules.alphamissense.constants import STATUS_NO_DATA, STATUS_OK
+from modules.alphamissense.tests.conftest import write_fixture_file
 
 
 class CountingClient(AlphaMissenseClient):
@@ -19,9 +18,8 @@ class CountingClient(AlphaMissenseClient):
         return super().fetch_raw_rows(chrom, position)
 
 
-def _client(registered_resource):
-    resource = get_reference_manager().get("alphamissense")
-    return CountingClient(resource)
+def _client(resource_handle):
+    return CountingClient(resource_handle)
 
 
 def test_cache_hit_avoids_second_file_read(registered_resource):
@@ -64,28 +62,25 @@ def test_different_variants_are_cached_independently(registered_resource):
     assert client.fetch_count == 2  # both were genuine, distinct lookups
 
 
-def test_cache_key_is_scoped_by_resource_version(tmp_path, monkeypatch):
+def test_cache_key_is_scoped_by_resource_version(tmp_path, fake_reference_manager):
     """
     If the pinned AlphaMissense version changes, previously cached
     results for the old version must not leak into the new version's
     results -- the cache key includes data_release specifically so a
     version bump invalidates everything without a time-based TTL.
     """
-    from modules.alphamissense.tests.conftest import write_fixture_file
-    from shared.reference import _set_resource_for_tests
-
     rows_v1 = [("chr1", "555", "A", "T", "hg38", "P1", "ENST1", "X1Y", "0.9", "likely_pathogenic")]
     rows_v2 = [("chr1", "555", "A", "T", "hg38", "P1", "ENST1", "X1Y", "0.1", "likely_benign")]
 
     file_v1 = write_fixture_file(tmp_path / "v1.tsv", rows_v1)
     file_v2 = write_fixture_file(tmp_path / "v2.tsv", rows_v2)
 
-    _set_resource_for_tests("alphamissense", file_v1, "zenodo:v1")
+    fake_reference_manager.set_resource(file_v1, "zenodo:v1")
     result_v1 = annotate("1", 555, "A", "T")
     assert result_v1["fields"]["am_class"] == "likely_pathogenic"
     assert result_v1["source_version"] == "zenodo:v1"
 
-    _set_resource_for_tests("alphamissense", file_v2, "zenodo:v2")
+    fake_reference_manager.set_resource(file_v2, "zenodo:v2")
     result_v2 = annotate("1", 555, "A", "T")
     assert result_v2["fields"]["am_class"] == "likely_benign"
     assert result_v2["source_version"] == "zenodo:v2"

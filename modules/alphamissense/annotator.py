@@ -4,6 +4,7 @@ from shared.cache import DiskCache, make_key
 from shared.config import get_config
 from shared.logging import get_logger
 from shared.validators import validate_variant
+from shared.exceptions import ValidationError
 
 from modules.alphamissense.client import AlphaMissenseClient
 from modules.alphamissense.constants import CACHE_FILENAME, CACHE_TTL_SECONDS, MODULE_NAME
@@ -47,6 +48,14 @@ def annotate(
     local file, not a possibly-transient API response.
     """
     variant = validate_variant(chrom, position, reference, alternate)
+    if len(variant.reference) != 1 or len(variant.alternate) != 1:
+        raise ValidationError(
+            "AlphaMissense supports only SNVs.",
+            context={
+                "reference": variant.reference,
+                "alternate": variant.alternate,
+            },
+        )
 
     cfg = get_config()
     am_client = client or AlphaMissenseClient()
